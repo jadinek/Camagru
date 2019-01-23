@@ -1,5 +1,4 @@
 <?php
-require_once 'database.php';
 require_once 'header.php';
 session_start();
 if (!isset($_SESSION['id'])){
@@ -10,6 +9,7 @@ if (!isset($_SESSION['id'])){
 <html lang = "en">
 <head>
 <meta charset = "UTF-8">
+<title>Document</title>
 <style>
     .booth{
         width: 400px;
@@ -64,20 +64,25 @@ if (!isset($_SESSION['id'])){
         <div class = "covers">
         <div class= "booth">
             <video id = "video" width= "400" height = "300" autoplay></video>
-            <a id = "capture" class = "booth-capture-button">Take photo</a>
-                        <form id ="export" action="" method="post">
-                            <input name="photo" id="merged_image" type="hidden">
-                            <input type="submit" name="upload" class="btn2" value="Upload">
-                        </form>
-
+            <a href="#" id = "capture" class = "booth-capture-button">Take photo</a>
+           <!--- <button id="new" class="btn btn-default">Save and Upload</button>
+                        <form method="post" accept-charset="utf-8" name="form1">
+                            <input name="hidden_data" id="hidden_data" type="hidden">
+                        </form>--->
             <div class="outsideWrapper">
                 <div class="insideWrapper">
                     <img class="coveredImage">
 
                     <canvas id= "canvas" width= "400" height= "300"></canvas>
+
+                    <!---<form id="export" action="upload.php" method="POST">
+                    <input type=hidden name="image_1" id="merged_image" value="">
+
+                </form>--->
                     <canvas class="coveringCanvas"></canvas>
     </div>
 </div>
+            <a href="#" onclick="convertCanvastoImage()" id = "capture" class = "booth-capture-button">Save and Upload</a>
             </div>
             
             <p>
@@ -93,8 +98,8 @@ if (!isset($_SESSION['id'])){
             <img class="stickers" width="200" src= "images/halo.png">
             <img class="stickers" width="200" src= "images/fez.png">
             <img class="stickers" width="200" src= "images/hearthat.png">
-            <img class="stickers" width="200" src= "images/case.png">
             </p>
+</p>
         </div>
         <script>
                 var sticker = document.querySelectorAll('.stickers');
@@ -126,28 +131,29 @@ if (!isset($_SESSION['id'])){
         }, function (error){
             //
         });
-        var picture;
         document.getElementById('capture').addEventListener('click', function(){
             context.drawImage(video, 0, 0, 400, 300);
-            context.drawImage(covered, 90, 0, 200, 150);
-            if (picture = canvas.getContext('2d')){
-                picture = canvas.toDataURL('image/png');
-                
-                var upload_img = document.getElementById('merged_image');
-                upload_img.value = picture;
-                console.log("img upload : " + upload_img.value);
-            }
+            img.src = canvas.toDataURL('image/png');
         })
+        var url = canvas.toDataURL();
     })();
     
+    function convertCanvasToImage(canvas) {
+        var cimage = new Image();
+        cimage.src = canvas.toDataURL("image/png");
+        return cimage;
+    }
     </script>
     </body>
     <form action="" method="POST" enctype="multipart/form-data">
-    <label class="label">Upload a file:</label>
-    <input type="file" name="file" class="btn2">
-    <input type="submit" name="but_upload" class="btn2" value="Upload">
-</form>
-    <?php require_once 'footer.php'; ?>
+        <label class="label">Upload a file:</label>
+        <input type="file" name="file" class="btn2">
+        <input type="submit" name="but_upload" class="btn2" value="Upload">
+    </form>
+    <form action="" method="POST" enctype="multipart/form-data">
+        <label class="label">Save and Upload:</label>
+        <input type="submit" name="canvas_upload" class="btn2" value="Upload">
+    </form>
     </html>
 
 <?php
@@ -155,13 +161,14 @@ if(isset($_POST['but_upload']))
 {
     $currentDir = getcwd();
     $uploads = "upload/";
+    $img = $_POST['image'];
     $servername = "127.0.0.1";
     $dusername = "root";
     $password = "root";
     $dbname = "camagru";
     $name = "";
     $Email = $_SESSION['id'];
-
+    //$query = mysqli_query($servername, $dursename, $password, $dbname);
     $fileTmpName = $_FILES['file']['tmp_name'];
  
     $name = $_FILES['file']['name'];
@@ -177,35 +184,40 @@ if(isset($_POST['but_upload']))
     // Check extension
     if( in_array($imageFileType,$extensions_arr) ){
     
-    // Insert record
-    $image_base64 = base64_encode(file_get_contents($fileTmpName));
-    $image = 'data:image/' .$imageFileType. ';base64,' .$image_base64;
-    $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $str = "INSERT INTO images (img_name, img, Email) VALUES ('$name', '$image', '$Email')";
-    $conn->exec($str);
-    // Upload file
-    move_uploaded_file($_FILES['file']['tmp_name'],$target_dir.$name);
-    }
+        // Insert record
+        $image_base64 = base64_encode(file_get_contents($fileTmpName));
+        $image = 'data:image/' .$imageFileType. ';base64,' .$image_base64;
+        $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $str = "INSERT INTO images (img_name, img, Email) VALUES ('$name', '$image', '$Email')";
+        $conn->exec($str);
+        // Upload file
+        move_uploaded_file($_FILES['file']['tmp_name'],$target_dir.$name);
+        
+       }
 }
-if(isset($_POST['upload']))
+if(isset($_POST['canvas_upload']))
 {
+    $cimage = convertCanvasToImage();
     $servername = "127.0.0.1";
     $dusername = "root";
     $password = "root";
     $dbname = "camagru";
     $name = "";
     $Email = $_SESSION['id'];
+         
+    $image_base64 = base64_encode(file_get_contents($cimage));
+    $imageFileType = 'png';
+    $image = 'data:image/' .$imageFileType. ';base64,' .$image_base64; 
     
-    $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $new_img = $_POST['photo'];
-    if (!strlen($new_img) < 50)
-    {
-        $str = "INSERT INTO images (img_name, img, Email) VALUES ('random', '$new_img', '$Email')";
-        $conn->exec($str);
-    }
+        $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+         
+         $str = "INSERT INTO images (img_name, img, Email) VALUES ('$name', '$image', '$Email')";
+         $conn->exec($str);
+         // Upload file
+         move_uploaded_file($_FILES['file']['tmp_name'],$target_dir.$name);
+       
 }
 //display images under the canvas as thumbnails
 $display = $conn->prepare("SELECT * FROM images");
@@ -217,4 +229,6 @@ foreach ($imgs as $img){
         echo '<img width = 150 src="'.$img['img'].'" alt="Image"/>';
     }
 }
+
+require_once 'footer.php';
 ?>

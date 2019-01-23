@@ -10,7 +10,8 @@ if(isset($_POST['ForgotPassword']))
         $select = $con->prepare("UPDATE users SET Pass= '$Password' WHERE Email = '$Email'");
         $select->execute();
 
-        $_SESSION["forgotpassword"] = "1";
+        $select = $con->prepare("UPDATE users SET forgot= '1' WHERE Email = '$Email'");
+        $select->execute();
 
         $message = 
         "PLease log in with your new password: $Password
@@ -38,7 +39,7 @@ if(isset($_POST['ForgotPassword']))
                         </form>
 
                         <form method = "post">
-                        <p class= "message"> Return to hompage? <a href="index.php">Home</a></p>
+                        <p><a href="signin.php">Sign in?</a></p>
 		</form>
 	</body>
 </html>

@@ -1,18 +1,21 @@
 <?php
 require_once 'database.php';
+require_once 'guest_header.php';
 
 if(isset($_POST['signin']))
     {
         $Email = $_POST['Email'];
         $Pass = $_POST['Pass'];
 
-        echo $_SESSION["forgotpassword"];
+        $select = $con->prepare("SELECT forgot FROM users WHERE Email = '$Email'");
+        $select->setFetchMode(PDO::FETCH_ASSOC);
+        $select->execute();
+        $data=$select->fetch();
 
-        if ($_SESSION["forgotpassword"] = "1")
+        if($data['forgot'] == 1)
             $enc_password = $Pass;
         else
             $enc_password = md5($Pass);
-
 
         $select = $con->prepare("SELECT * FROM users WHERE Email= '$Email' and Pass = '$enc_password'");
         $select->setFetchMode(PDO::FETCH_ASSOC);
@@ -59,6 +62,11 @@ if(isset($_POST['signin']))
                         <input type = "submit" name = "signin" value = "SIGN IN">
 			<p class= "message"> Not registered? <a href="register.php">Create an account</a></p>
             <p class= "message"> <a href="forgotpassword.php">Forgot password?</a></p>
+</div>
+</div>
 		</form>
 	</body>
 </html>
+<?php
+require_once 'footer.php';
+?>

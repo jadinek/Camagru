@@ -1,5 +1,6 @@
 <?php
 require_once 'database.php';
+require_once 'guest_header.php';
 
 function validate($input)
 {
@@ -12,32 +13,23 @@ function validate($input)
             $alert = 'Invalid username.';
             return;
         }
-        /*elseif(!isUnique("UserName", $input["UserName"]))
-        {
-            $alert = 'Username has already been taken.';
-            return;
-        }*/
         if(preg_match('/[;"=]/', $input["Email"]) || strpos($input["Email"], '@') == false)
         {
             $alert = 'Invalid email.';
             return;
         }
-        /*elseif(!isUnique("Email", $input["Email"]))
-        {
-            $alert = 'Email is already in use.';
-            return;
-        }*/
         if(strlen("Pass") < 4 || strlen("Pass") > 12)
         {
             $alert = 'Password must be 4-12 characters, contain an uppercase letter, and a special character. Please try again.';
             return;
         }
-        /*$uppercase_test = preg_match('#[A-Z]+#', $Pass);
-        $special_test = preg_match('#[!@$%^&*()_+=-]+#', $Pass);
+        $uppercase_test = preg_match('#[A-Z]+#', $input["Pass"]);
+        $special_test = preg_match('#[!@$%^&*()_+=-]+#', $input["Pass"]);
         if(!$uppercase_test && !$special_test)
         {
+            $alert = 'Invalid password.';
             return;
-        }*/
+        }
         $x = 2;
 
     }
@@ -118,6 +110,11 @@ elseif(isset($_POST['ForgotPassword']))
                         <form method = "post">
                         <input type = "submit" name = "ForgotPassword" value = "forgot password?">
                         <p class= "message"> Already registered? <a href="signin.php">Sign in</a></p>
-		</form>
+        </form>
+</div>
+</div>
 	</body>
 </html>
+<?php
+require_once 'footer.php';
+?>

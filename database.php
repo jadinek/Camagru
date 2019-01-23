@@ -17,13 +17,14 @@ try {
 
   $orders = "CREATE TABLE IF NOT EXISTS users(
     UserID int(11) UNSIGNED AUTO_INCREMENT not null PRIMARY KEY,
-    UserName varchar(32) not null UNIQUE,
+    UserName varchar(32) not null,
     FirstName varchar(32) not null,
     LastName varchar(32) not null,
     Email varchar(32) not null UNIQUE,
     Pass varchar(32) not null,
     Confirmed int(11) not null,
     ConfirmCode int(30) not null,
+    forgot int(2) not null DEFAULT '0',
     Notifications int(1) not null DEFAULT '1'
     )";
     $con->exec($orders);
@@ -37,6 +38,14 @@ try {
 			likes INT(2) NOT NULL DEFAULT '0'
       )";
     $con->exec($images);
+
+    $comments = "CREATE TABLE IF NOT EXISTS comments ( 
+      ID int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+      Email varchar(32) NOT NULL,
+      img_name varchar(200) NOT NULL,
+			comment varchar(500) NOT NULL
+      )";
+    $con->exec($comments);
 }
 catch (PDOException $e){
     echo "Error" .  $e->getMessage();

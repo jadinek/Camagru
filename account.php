@@ -1,15 +1,17 @@
 <?php
 require_once 'header.php';
+require_once 'database.php';
 session_start();
 if (!isset($_SESSION['id'])){
     header("location:/signin.php");
 }
 $Email = $_SESSION['id'];
+global $alert;
     
     //username
     if(isset($_POST['val1']))
     {
-        $UserName = $_POST['newUserName'];
+        $UserName = trim($_POST['newUserName']);
 
         $select = $con->prepare("UPDATE users SET UserName= '$UserName' WHERE Email = '$Email'");
         $select->execute();
@@ -18,13 +20,19 @@ $Email = $_SESSION['id'];
     //email
     if(isset($_POST['val2']))
     {
-        $newEmail = $_POST['newEmail'];
+        $newEmail = trim($_POST['newEmail']);
 
         $select = $con->prepare("UPDATE users SET Email= '$newEmail' WHERE Email = '$Email'");
-        //$select->setFetchMode(PDO::FETCH_ASSOC);
+        $select->execute();
+
+        $select = $con->prepare("UPDATE images SET Email= '$newEmail' WHERE Email = '$Email'");
+        $select->execute();
+
+        $select = $con->prepare("UPDATE comments SET Email= '$newEmail' WHERE Email = '$Email'");
         $select->execute();
 
         $Email = $newEmail;
+        $_SESSION['id']= $newEmail;
 
         $alert = "Email successfully updated.";
 
@@ -32,21 +40,35 @@ $Email = $_SESSION['id'];
     //password
     if(isset($_POST['val3']))
     {
-        $Password = $_POST['newPassword'];
+        $Password = trim($_POST['newPassword']);
 
         $enc_password = md5($Password);
 
         $select = $con->prepare("UPDATE users SET Pass= '$enc_password' WHERE Email = '$Email'");
         $select->execute();
 
+        $select = $con->prepare("UPDATE users SET forgot= '0' WHERE Email = '$Email'");
+        $select->execute();
+
         $alert = "Password successfully updated.";
     }
-    //notifications
-    /*if(isset($_POST['val4']))
+    //notifications on
+    if(isset($_POST['val4']))
     {
-        $alert = "Notification preference changed.";
+        $select = $con->prepare("UPDATE users SET Notifications= '1' WHERE Email = '$Email'");
+        $select->execute();
+        $alert = "Notifications on.";
 
-    }*/
+    }
+    //notifications off
+    if(isset($_POST['val5']))
+    {
+        $select = $con->prepare("UPDATE users SET Notifications= '0' WHERE Email = '$Email'");
+        $select->execute();
+        $alert = "Notifications off.";
+
+    }
+
 ?>
 
 <html>
@@ -69,8 +91,14 @@ $Email = $_SESSION['id'];
                         <input type = "text" name = "newPassword" placeholder = "Enter new password">
                         <input type = "submit" name = "val3" value = "Submit">
 
-                        <input type = "submit" name = "val4" value = "enable/disable notifications">
+                        <input type = "submit" name = "val4" value = "Enable notifications">
+                        <input type = "submit" name = "val5" value = "Disable notifications">
                         <?php echo $alert ?>
-		</form>
+        </form>
+</div>
+</div>
 	</body>
 </html>
+<?php
+require_once 'footer.php';
+?>
