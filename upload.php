@@ -1,5 +1,5 @@
 <?php
-require_once 'database.php';
+require_once 'config/database.php';
 require_once 'header.php';
 session_start();
 if (!isset($_SESSION['id'])){
@@ -67,7 +67,7 @@ if (!isset($_SESSION['id'])){
             <a id = "capture" class = "booth-capture-button">Take photo</a>
                         <form id ="export" action="" method="post">
                             <input name="photo" id="merged_image" type="hidden">
-                            <input type="submit" name="upload" class="btn2" value="Upload">
+                            <input class = "booth-capture-button" type="submit" name="upload" class="btn2" value="Upload">
                         </form>
 
             <div class="outsideWrapper">
@@ -97,6 +97,7 @@ if (!isset($_SESSION['id'])){
             </p>
         </div>
         <script>
+        //superimpose
                 var sticker = document.querySelectorAll('.stickers');
                 var covered = document.querySelector('.coveredImage');
 
@@ -108,6 +109,7 @@ if (!isset($_SESSION['id'])){
             </script>
     </div>
     <script>
+    //livestream
     (function(){
         var video = document.getElementById('video'),
         canvas = document.getElementById('canvas'),
@@ -126,6 +128,7 @@ if (!isset($_SESSION['id'])){
         }, function (error){
             //
         });
+        //save merged canvas image as png
         var picture;
         document.getElementById('capture').addEventListener('click', function(){
             context.drawImage(video, 0, 0, 400, 300);
@@ -135,7 +138,6 @@ if (!isset($_SESSION['id'])){
                 
                 var upload_img = document.getElementById('merged_image');
                 upload_img.value = picture;
-                console.log("img upload : " + upload_img.value);
             }
         })
     })();
@@ -144,29 +146,27 @@ if (!isset($_SESSION['id'])){
     </body>
     <form action="" method="POST" enctype="multipart/form-data">
     <label class="label">Upload a file:</label>
-    <input type="file" name="file" class="btn2">
-    <input type="submit" name="but_upload" class="btn2" value="Upload">
+    <input class = "booth-capture-button" type="file" name="file" class="btn2">
+    <input class = "booth-capture-button" type="submit" name="but_upload" class="btn2" value="Upload">
 </form>
-    <?php require_once 'footer.php'; ?>
+    <?php require_once 'user_footer.php'; ?>
     </html>
 
 <?php
+//upload converted canvas image
 if(isset($_POST['but_upload']))
 {
     $currentDir = getcwd();
-    $uploads = "upload/";
-    $servername = "127.0.0.1";
+    $servername = "localhost";
     $dusername = "root";
-    $password = "root";
+    $password = "password";
     $dbname = "camagru";
-    $name = "";
     $Email = $_SESSION['id'];
 
     $fileTmpName = $_FILES['file']['tmp_name'];
  
     $name = $_FILES['file']['name'];
-    $target_dir = "upload/";
-    $target_file = $target_dir . basename($_FILES["file"]["name"]);
+    $target_file = basename($_FILES["file"]["name"]);
     
     // Select file type
     $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -180,24 +180,24 @@ if(isset($_POST['but_upload']))
     // Insert record
     $image_base64 = base64_encode(file_get_contents($fileTmpName));
     $image = 'data:image/' .$imageFileType. ';base64,' .$image_base64;
-    $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dusername, $password);
+    
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $str = "INSERT INTO images (img_name, img, Email) VALUES ('$name', '$image', '$Email')";
     $conn->exec($str);
-    // Upload file
-    move_uploaded_file($_FILES['file']['tmp_name'],$target_dir.$name);
     }
 }
+//upload image from computer
 if(isset($_POST['upload']))
 {
-    $servername = "127.0.0.1";
+    $servername = "localhost";
     $dusername = "root";
-    $password = "root";
+    $password = "password";
     $dbname = "camagru";
     $name = "";
     $Email = $_SESSION['id'];
     
-    $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dusername, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     $new_img = $_POST['photo'];

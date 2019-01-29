@@ -11,11 +11,14 @@
 
 </head>
 <body>
-<header class="header-login-signup">
+<footer class="header-login-signup">
 	<div class="header-limiter">
-		<h1><a href="index.php">Cama<span>gru</span></a></h1>
+		<h1>@2019 Camagru, Inc.</h1>
 		<nav>
+		<a href="logout.php">Logout</a>
+		</nav>
 	</div>
-</header>
+
+</footer>
 </body>
 </html>

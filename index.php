@@ -5,9 +5,9 @@ if (!isset($_SESSION['id'])){
   header("location:/signin.php");
 }
 
-$servername = "127.0.0.1";
+$servername = "localhost";
 $dusername = "root";
-$password = "root";
+$password = "password";
 $dbname = "camagru";
 $name = "";
 
@@ -16,7 +16,7 @@ if(isset($_POST['comment']))
         $user = $_SESSION['id'];
         $img = $_POST['img_name'];
 
-        $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dusername, $password);
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         //get the email of the user that the image belongs to
@@ -47,7 +47,7 @@ if(isset($_POST['like']))
 {
   $img = $_POST['img_name'];
 
-  $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dusername, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   $select = $conn->prepare("UPDATE images SET likes= likes + 1 WHERE img = '$img'");
@@ -59,7 +59,7 @@ if(isset($_POST['delete']))
   $user = $_SESSION['id'];
   $img = $_POST['img_name'];
 
-  $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dusername, $password);
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
   //get the email of the user that the image belongs to
@@ -122,7 +122,7 @@ if(isset($_POST['delete']))
     <ul class="thumbnails">
       <?php
 
-      $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+      $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dusername, $password);
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       $display = $conn->prepare("SELECT * FROM images");
       $display->execute();
@@ -156,5 +156,5 @@ if(isset($_POST['delete']))
 </body>
 </html>
 <?php
-require_once 'footer.php';
+require_once 'user_footer.php';
 ?>

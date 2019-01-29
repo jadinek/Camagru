@@ -1,5 +1,6 @@
 <?php
-require_once 'database.php';
+require_once 'config/database.php';
+require_once 'guest_header.php';
 
 if(isset($_POST['ForgotPassword']))
     {
@@ -14,8 +15,8 @@ if(isset($_POST['ForgotPassword']))
         $select->execute();
 
         $message = 
-        "PLease log in with your new password: $Password
-        Remember to update your password in your account settings.";
+        "Please log in with your new password: $Password
+        Remember to update your password in your account settings!";
 
         mail($Email, "Retrieve password", $message, "From: DoNotReply@camagru.com");
         
@@ -41,5 +42,10 @@ if(isset($_POST['ForgotPassword']))
                         <form method = "post">
                         <p><a href="signin.php">Sign in?</a></p>
 		</form>
+        </div>
+        </div>
 	</body>
 </html>
+<?php
+require_once 'footer.php';
+?>

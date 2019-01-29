@@ -1,7 +1,7 @@
 <?php
-require_once 'database.php';
+require_once 'config/database.php';
 require_once 'guest_header.php';
-
+session_start();
 function validate($input)
 {
     global $x;
@@ -83,7 +83,7 @@ if(isset($_POST['Register']))
     }
 elseif(isset($_POST['ForgotPassword']))
 {
-    header('Location: http://localhost:8888/forgotpassword.php'); 
+    header('Location:/forgotpassword.php');; 
 }
 ?>
 <html>

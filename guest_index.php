@@ -1,6 +1,5 @@
 <?php
 require_once 'guest_header.php';
-session_start();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -13,10 +12,9 @@ session_start();
 <div id="wrapper">
   <div id="wrapper-top"> </div>
   <div id="left">
-    <ul class="menu">
-      <li><a href="account.php">Account</a></li>
-      <li><a href="upload.php">Upload</a></li>
-    </ul>
+  <ul class="menu">
+      <li><a href="signin.php">Upload</a></li>
+      </ul>
     <div id="left-bottom">
       <div class="search">
         <form action="#" method="get">
@@ -35,12 +33,12 @@ session_start();
   <div id="right">
     <ul class="thumbnails">
       <?php
-      $servername = "127.0.0.1";
+      $servername = "localhost";
       $dusername = "root";
-      $password = "root";
+      $password = "password";
       $dbname = "camagru";
       $name = "";
-      $conn = new PDO("mysql:host=$servername;port=8889;dbname=$dbname", $dusername, $password);
+      $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dusername, $password);
       $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       $display = $conn->prepare("SELECT * FROM images");
       $display->execute();

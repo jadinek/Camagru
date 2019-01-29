@@ -1,6 +1,7 @@
 <?php
-require_once 'database.php';
+require_once 'config/database.php';
 require_once 'guest_header.php';
+session_start();
 
 if(isset($_POST['signin']))
     {
@@ -8,7 +9,6 @@ if(isset($_POST['signin']))
         $Pass = $_POST['Pass'];
 
         $select = $con->prepare("SELECT forgot FROM users WHERE Email = '$Email'");
-        $select->setFetchMode(PDO::FETCH_ASSOC);
         $select->execute();
         $data=$select->fetch();
 
@@ -18,7 +18,6 @@ if(isset($_POST['signin']))
             $enc_password = md5($Pass);
 
         $select = $con->prepare("SELECT * FROM users WHERE Email= '$Email' and Pass = '$enc_password'");
-        $select->setFetchMode(PDO::FETCH_ASSOC);
         $select->execute();
         $data=$select->fetch();
         //why does it first test for correct password before account confirmation
@@ -29,8 +28,8 @@ if(isset($_POST['signin']))
         elseif($data['Email'] == $Email and $data['Pass'] == $enc_password)
         {
             $_SESSION['id'] = $data['Email'];
-            $_SESSION['Pass'] = $data['Pass'];
-            header('Location: http://localhost:8888/index.php');
+            //$_SESSION['Pass'] = $data['Pass'];
+            header('Location:/index.php');
         }
         /*elseif($data['Email'] == $Email and $data['Pass'] == $Password)
         {
